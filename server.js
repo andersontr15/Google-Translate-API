@@ -10,10 +10,6 @@ app.use(require('morgan')('dev'));
 
 app.set('view engine', 'ejs');
 
-app.get('/results', function(request, response) {
-	console.log('in results');
-})
-
 app.post('/search', function(request, response) {
 		if(!request.body.query) {
 			return response.status(400).send('Invalid data supplied!');
