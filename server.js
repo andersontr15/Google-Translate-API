@@ -1,14 +1,18 @@
+var port = process.env.PORT || 8000;
 var express = require('express');
 var bodyParser = require('body-parser');
 var httpRequest = require('request');
+var morgan = require('morgan');
 var app = express();
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
-
-app.use(require('morgan')('dev'));
-
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(morgan('dev'));
 app.set('view engine', 'ejs');
+
+app.get('/', function(request, response) {
+	response.render('search.ejs', { message: 'Search' });
+});
 
 app.post('/search', function(request, response) {
 		if(!request.body.query) {
@@ -19,15 +23,11 @@ app.post('/search', function(request, response) {
 				return response.status(400).send(err)
 			}
 			var parsed = JSON.parse(body);
-			var text = parsed.data.translations[0].translatedText;
-			return response.render('results.ejs', {translation: text, source: request.body.query})
-		})
-});
 
-app.get('/', function(request, response) {
-	response.render('search.ejs', {
-		message: 'Search'
-	})
+			var text = parsed.data.translations[0].translatedText;
+
+			return response.render('results.ejs', { translation: text, source: request.body.query });
+		});
 });
 
 app.listen(8000, function() {
